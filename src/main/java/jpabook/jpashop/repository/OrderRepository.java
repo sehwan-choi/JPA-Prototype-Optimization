@@ -2,6 +2,8 @@ package jpabook.jpashop.repository;
 
 import jpabook.jpashop.domain.Member;
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.domain.OrderItem;
+import jpabook.jpashop.repository.order.simplequery.SimpleOrderQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,7 +88,46 @@ public class OrderRepository {
         return query.getResultList();
     }
 
-    /*public List<Order> findAll(OrderSearch orderSearch) {
-        em.createQuery("select o from Order o join o.member",Order.class);
-    }*/
+    public List<Order> findAllWithMemberDelivery() {
+        String query = "select o from Order o join fetch o.member join fetch  o.delivery";
+
+        return em.createQuery(query, Order.class).getResultList();
+    }
+
+    public List<Order> findAllWithItem() {
+
+        return em.createQuery(
+                "select distinct o from Order o " +
+                        "join fetch o.member m " +
+                        "join fetch o.delivery d " +
+                        "join fetch o.orderItems oi " +
+                        "join fetch oi.item i", Order.class)
+                .setFirstResult(1)
+                .setMaxResults(5)
+                .getResultList();
+    }
+
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        String query = "select o from Order o join fetch o.member join fetch  o.delivery";
+
+        return em.createQuery(query, Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
+
+    public List<Order> osivTest() {
+        String query = "select o from Order o join fetch o.member join fetch  o.delivery";
+
+        return em.createQuery(query, Order.class)
+                .getResultList();
+    }
+
+    public List<Order> osivTest2() {
+        String query = "select o from Order o join fetch o.member join fetch  o.delivery";
+
+        return em.createQuery(query, Order.class)
+                .getResultList();
+    }
 }
